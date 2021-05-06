@@ -1,0 +1,21 @@
+{
+    "debugMode": 1,
+    "showFPS": true,
+    "frameRate": 60,
+    "id": "gameCanvas",
+    "renderMode": 0,
+    "engineDir": "../../frameworks/cocos2d-html5",
+    "jsListOrder": [
+        "src/**/*.js"
+    ],
+    "modules": [
+        "cocos2d"
+    ],
+    "jsList": [
+        "src/config/GameConfig.js",
+        "src/config/Resource.js",
+        "src/screen/Block.js",
+        "src/screen/GameScreen.js",
+        "src/screen/MenuScreen.js"
+    ]
+}
