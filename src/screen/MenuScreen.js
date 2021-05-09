@@ -17,7 +17,7 @@ var MenuScreen = cc.Layer.extend({
         backGround.setPosition(winSize.width / 2, winSize.height / 2);
         this.addChild(backGround);
 
-        var title = new cc.LabelTTF("2048", res.billy_ohio_ttf, 100);
+        var title = new cc.LabelTTF("2048", res.lato_regular_ttf, 100);
         title.setPosition(winSize.width / 2, winSize.height / 2);
         this.addChild(title);
     }

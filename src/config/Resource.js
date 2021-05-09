@@ -3,12 +3,13 @@
 var res = {
     background_png : 'res/background.jpg',
     block_png: 'res/block.png',
-    billy_ohio_ttf : 'res/fonts/Billy Ohio.ttf',
+    blockbg_png: 'res/blockbg.png',
+    lato_regular_ttf : 'res/fonts/Lato-Regular.ttf',
 };
 
 var g_mainmenu = [
     res.background_png,
-    res.billy_ohio_ttf
+    res.lato_regular_ttf,
 ];
 
 var g_maingame = [

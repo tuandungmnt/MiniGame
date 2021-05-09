@@ -4517,7 +4517,7 @@ vec2
 
 /**
  * @method create
-* @param {float|float} float
+* @param {number} float
 * @param {vec3_object|vec2_object} vec3
 * @return {cc.MoveTo|cc.MoveTo}
 */
