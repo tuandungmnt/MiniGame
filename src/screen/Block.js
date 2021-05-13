@@ -64,6 +64,7 @@ var Block = cc.Sprite.extend({
     },
 
     newBlock: function (value) {
+        this.value = value;
         var action1 = cc.callFunc(function () { this.setValue(value) }, this);
 
         var action2 = cc.ScaleBy(0, 0.8);

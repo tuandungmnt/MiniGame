@@ -5,6 +5,7 @@ var GameScreen = cc.Layer.extend({
     score: null,
     scoreLabel: null,
     boardBG: null,
+    gameOver: false,
 
     ctor:function () {
         this._super();
@@ -18,7 +19,6 @@ var GameScreen = cc.Layer.extend({
         this.initBoard();
         this.initBlocks();
         this.initScore();
-        this.addTouchListener();
         this.addKeyBoardListener();
         this.increaseRandomBlock();
     },
@@ -57,13 +57,42 @@ var GameScreen = cc.Layer.extend({
     initScore: function () {
         this.score = 0;
         this.scoreLabel = new cc.LabelTTF('0', res.lato_regular_ttf, 40);
-        this.setAnchorPoint(cc.p(0, 0));
-        this.scoreLabel.setPosition(50, winSize.width + 50);
+        this.setAnchorPoint(cc.p(0.5, 0));
+        this.scoreLabel.setPosition(winSize.width / 2, winSize.width + 50);
         this.addChild(this.scoreLabel);
     },
 
     endGame: function () {
+        this.gameOver = true;
+        console.log("game over");
 
+        var overBoard = new cc.Sprite(res.overboard_png);
+        overBoard.setAnchorPoint(0.5, 0.5);
+        overBoard.setPosition(winSize.width / 2, winSize.height / 2);
+        overBoard.setScale(winSize.width * 0.8 / 200, winSize.height * 0.8 / 200);
+        this.addChild(overBoard);
+
+        var overText = new cc.LabelTTF("Game Over", res.lato_regular_ttf, 50);
+        overText.setPosition(winSize.width / 2, winSize.height * 3 / 4);
+        this.addChild(overText);
+
+        var scoreText = new cc.LabelTTF(this.score.toString(), res.lato_regular_ttf, 80);
+        scoreText.setPosition(winSize.width / 2, winSize.height / 2);
+        this.addChild(scoreText);
+
+        var button = new ccui.Button();
+        button.setTitleText("Back");
+        button.setTitleFontSize(50);
+        button.setPosition(winSize.width / 2, winSize.height / 4);
+        button.setPressedActionEnabled(true);
+        button.addClickEventListener(this.back);
+        this.addChild(button);
+    },
+
+    back: function () {
+        cc.LoaderScene.preload(g_mainmenu, function () {
+            cc.director.runScene(MenuScreen.scene());
+        }, this);
     },
 
     addScore: function (value) {
@@ -91,6 +120,27 @@ var GameScreen = cc.Layer.extend({
                     if (pos === 0) this.blocks[i][j].newBlock(value);
                     pos--;
                 }
+    },
+
+    checkEndGame: function () {
+        var i, j;
+        for (i = 0; i < this.boardSize; ++i)
+            for (j = 0; j < this.boardSize; ++j) {
+                if (this.blocks[i][j].value === 0) return false;
+                if (i + 1 < this.boardSize - 1 && this.blocks[i][j].value === this.blocks[i + 1][j].value) return false;
+                if (j + 1 < this.boardSize - 1 && this.blocks[i][j].value === this.blocks[i][j + 1].value) return false;
+            }
+        for (i = 0; i < this.boardSize; ++i)
+            for (j = 0; j < this.boardSize; ++j) {
+                console.log(i.toString() + " " + j.toString() + " " + this.blocks[i][j].value.toString());
+            }
+
+        return true;
+    },
+
+    afterMove: function () {
+        this.increaseRandomBlock();
+        //if (this.checkEndGame() === true) this.endGame();
     },
 
     solveOneLine: function (type, array) {
@@ -156,7 +206,7 @@ var GameScreen = cc.Layer.extend({
                 else this.blocks[i][j].moveAndChange(i, moveTo[j], 1, -value[j]);
             }
         }
-        if (check) this.increaseRandomBlock();
+        if (check) this.afterMove();
     },
 
     moveRight: function () {
@@ -175,7 +225,7 @@ var GameScreen = cc.Layer.extend({
                 else this.blocks[i][j].moveAndChange(moveTo[i], j, 1, -value[i]);
             }
         }
-        if (check) this.increaseRandomBlock();
+        if (check) this.afterMove();
     },
 
     moveUp: function () {
@@ -194,7 +244,7 @@ var GameScreen = cc.Layer.extend({
                 else this.blocks[i][j].moveAndChange(i, moveTo[j], 1, -value[j]);
             }
         }
-        if (check) this.increaseRandomBlock();
+        if (check) this.afterMove();
     },
 
     moveLeft: function () {
@@ -213,7 +263,7 @@ var GameScreen = cc.Layer.extend({
                 else this.blocks[i][j].moveAndChange(moveTo[i], j, 1, -value[i]);
             }
         }
-        if (check) this.increaseRandomBlock();
+        if (check) this.afterMove();
     },
 
     addKeyBoardListener: function () {
@@ -221,6 +271,9 @@ var GameScreen = cc.Layer.extend({
         cc.eventManager.addListener({
             event: cc.EventListener.KEYBOARD,
             onKeyPressed: function (key, event) {
+                if (self.checkEndGame()) self.endGame();
+                if (self.gameOver === true) return;
+
                 switch (key) {
                     case cc.KEY.left:
                         self.moveLeft();
@@ -237,10 +290,6 @@ var GameScreen = cc.Layer.extend({
                 }
             }
         }, this);
-    },
-
-    addTouchListener: function () {
-
     },
 });
 
